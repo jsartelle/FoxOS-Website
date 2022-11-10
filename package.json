@@ -9,5 +9,9 @@
   },
   "devDependencies": {
     "nuxt": "3.0.0-rc.13"
+  },
+  "dependencies": {
+    "sanitize.css": "^13.0.0",
+    "sass": "^1.56.1"
   }
 }
