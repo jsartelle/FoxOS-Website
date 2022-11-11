@@ -10,44 +10,63 @@
       @minimize="minimizePanel"
       @maximize="maximizePanel"
       @resize="resizePanel"
-    />
+    >
+      <component
+        v-if="panel.component"
+        :is="panel.component"
+        v-bind="panel.props"
+      />
+      <iframe
+        v-else-if="panel.href"
+        width="100%"
+        height="100%"
+        :src="panel.href"
+      ></iframe>
+    </DesktopPanel>
+    <button @click="() => createMarkdownPanel()">Create Markdown Panel</button>
+    <button @click="() => createWebPanel()">Create Web Panel</button>
   </main>
 </template>
 
 <script setup lang="ts">
 import {
   PanelState,
+  createPanel,
   type Panel,
   type PanelResizeEvent,
 } from '~~/components/DesktopPanel.vue'
 
 const panels = $ref(new Map<string, Panel>())
-function createPanel(options: Partial<Panel>): Panel {
-  return {
-    title: '',
-    id: crypto.randomUUID(),
-    x: 0,
-    y: 0,
-    width: 500,
-    height: 500,
-    state: null,
-    ...options,
-  }
-}
-for (let i = 0; i < 3; i++) {
-  const panel = createPanel({ title: `Panel ${i + 1}`, y: i * 100 })
+
+function createMarkdownPanel(path?: string) {
+  path = path ?? window.prompt('Enter path to Markdown content') ?? undefined
+  if (!path) return
+  const panel = createPanel({
+    component: 'ContentDoc',
+    props: { path },
+  })
   panels.set(panel.id, panel)
 }
 
-function focusPanel(id: string) {
-  const panel = panels.get(id)
-  if (panel) {
-    panels.delete(id)
-    panels.set(id, panel)
-  }
+function createWebPanel(href?: string) {
+  href = href ?? window.prompt('Enter a URL') ?? undefined
+  if (!href) return
+  const panel = createPanel({ href })
+  panels.set(panel.id, panel)
 }
 
-let draggedPanel = $ref<Panel | undefined>()
+createMarkdownPanel('nested/markdown-cheatsheet')
+createWebPanel('https://nuxtjs.org/')
+
+function focusPanel(id: string) {
+  const panel = panels.get(id)
+  if (!panel) return
+  // FIXME causes panel content to reload
+  panels.delete(id)
+  panels.set(id, panel)
+}
+
+let draggedPanel = $ref<Panel>()
 
 function startDragPanel(id: string) {
   const panel = panels.get(id)
@@ -83,26 +102,23 @@ function closePanel(id: string) {
 
 function minimizePanel(id: string) {
   const panel = panels.get(id)
-  if (panel) {
-    panel.state =
-      panel.state === PanelState.Minimized ? null : PanelState.Minimized
-  }
+  if (!panel) return
+  panel.state =
+    panel.state === PanelState.Minimized ? null : PanelState.Minimized
 }
 
 function maximizePanel(id: string) {
   const panel = panels.get(id)
-  if (panel) {
-    panel.state =
-      panel.state === PanelState.Maximized ? null : PanelState.Maximized
-  }
+  if (!panel) return
+  panel.state =
+    panel.state === PanelState.Maximized ? null : PanelState.Maximized
 }
 
 function resizePanel({ id, width, height }: PanelResizeEvent) {
   const panel = panels.get(id)
-  if (panel) {
-    panel.width = Math.ceil(width)
-    panel.height = Math.ceil(height)
-  }
+  if (!panel) return
+  panel.width = Math.ceil(width)
+  panel.height = Math.ceil(height)
 }
 </script>
 
@@ -112,6 +128,6 @@ function resizePanel({ id, width, height }: PanelResizeEvent) {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: lightgreen;
+  background-color: #367274;
 }
 </style>

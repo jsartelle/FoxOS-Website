@@ -9,9 +9,11 @@
       <div class="title" @mousedown="$emit('grab', id)">{{ title }}</div>
     </div>
     <div class="contents" ref="contentsRef">
-      Position: {{ x }}, {{ y }}<br />
-      Size: {{ width }}x{{ height }}<br />
-      State: {{ state }}
+      <slot>
+        Position: {{ x }}, {{ y }}<br />
+        Size: {{ width }}x{{ height }}<br />
+        State: {{ state }}
+      </slot>
     </div>
   </div>
 </template>
@@ -20,6 +22,21 @@
 export enum PanelState {
   Minimized = 'minimized',
   Maximized = 'maximized',
+}
+
+export function createPanel(opts: Partial<Panel>): Panel {
+  return Object.assign(
+    {
+      title: '',
+      id: crypto.randomUUID(),
+      x: 0,
+      y: 0,
+      width: 500,
+      height: 500,
+      state: null,
+    },
+    opts
+  )
 }
 </script>
 
@@ -32,6 +49,9 @@ export interface Panel {
   width: number
   height: number
   state: PanelState | null
+  component?: string
+  props?: any
+  href?: string
 }
 
 export interface PanelResizeEvent {
@@ -73,8 +93,8 @@ const unwatch = watch($$(contentsRef), (contents) => {
   position: absolute;
   left: v-bind('x + "px"');
   top: v-bind('y + "px"');
-  background-color: lightgray;
   display: flex;
+  background-color: white;
   flex-flow: column;
   border: 1px solid black;
 
@@ -106,8 +126,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
 .contents {
   width: v-bind('width + "px"');
   height: v-bind('height + "px"');
-  overflow: hidden;
-  background-color: deepskyblue;
+  overflow: scroll;
   resize: both;
   min-width: 100%;
 
@@ -119,7 +138,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
   }
 
   .panel.minimized & {
-    height: 0;
+    height: 0 !important;
   }
 }
 </style>
