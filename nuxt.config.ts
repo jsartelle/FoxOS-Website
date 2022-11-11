@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   experimental: {
     reactivityTransform: true,
   },
+  modules: ['@nuxt/content'],
   routeRules: {
     '/': { redirect: '/desktop' },
     '/desktop': { ssr: false },
