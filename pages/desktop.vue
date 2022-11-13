@@ -26,15 +26,18 @@
         ></iframe>
       </DesktopPanel>
     </div>
-    <button @click="() => createMarkdownPanel()">Create Markdown Panel</button>
-    <button @click="() => createWebPanel()">Create Web Panel</button>
+    <Taskbar
+      :panels="panels"
+      :focusedId="panelOrder[panelOrder.length - 1]"
+      @focus="focusPanel"
+      @newPanel="registerPanel"
+    />
   </main>
 </template>
 
 <script setup lang="ts">
 import {
   PanelState,
-  createPanel,
   type Panel,
   type PanelResizeEvent,
 } from '~~/components/DesktopPanel.vue'
@@ -42,28 +45,10 @@ import {
 const panels = $ref(new Map<string, Panel>())
 const panelOrder: string[] = $ref([])
 
-function createMarkdownPanel(path?: string) {
-  path = path ?? window.prompt('Enter path to Markdown content') ?? undefined
-  if (!path) return
-  const panel = createPanel({
-    title: 'Markdown',
-    component: 'ContentDoc',
-    props: { path },
-  })
+function registerPanel(panel: Panel) {
   panels.set(panel.id, panel)
   panelOrder.push(panel.id)
 }
-
-function createWebPanel(href?: string) {
-  href = href ?? window.prompt('Enter a URL') ?? undefined
-  if (!href) return
-  const panel = createPanel({ title: 'Web', href })
-  panels.set(panel.id, panel)
-  panelOrder.push(panel.id)
-}
-
-createMarkdownPanel('nested/markdown-cheatsheet')
-createWebPanel('https://nuxtjs.org/')
 
 function focusPanel(id: string) {
   const index = panelOrder.indexOf(id)

@@ -75,7 +75,8 @@ export interface PanelResizeEvent {
   height: number
 }
 
-const { title, id, x, y, width, height, state, order } = defineProps<PanelProps>()
+const { title, id, x, y, width, height, state, order } =
+  defineProps<PanelProps>()
 
 const emit = defineEmits<{
   (e: 'focus', id: string): void
@@ -134,8 +135,8 @@ const unwatch = watch($$(contentsRef), (contents) => {
 }
 
 .title {
+  // TODO center me
   padding: 0 20px;
-  text-align: center;
   flex-grow: 1;
   user-select: none;
 }
