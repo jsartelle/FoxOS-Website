@@ -124,7 +124,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
 
 .title-bar {
   position: relative;
-  background-color: gray;
+  background-color: darkgray;
   display: flex;
   flex-direction: row;
 
@@ -135,6 +135,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
 
 .title {
   padding: 0 20px;
+  text-align: center;
   flex-grow: 1;
   user-select: none;
 }
