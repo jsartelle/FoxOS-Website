@@ -54,13 +54,28 @@ export interface Panel {
   href?: string
 }
 
+export interface PanelProps {
+  // TODO extending Panel doesn't work
+  title: string
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
+  state: PanelState | null
+  component?: string
+  props?: any
+  href?: string
+  order: number
+}
+
 export interface PanelResizeEvent {
   id: string
   width: number
   height: number
 }
 
-const { title, id, x, y, width, height, state } = defineProps<Panel>()
+const { title, id, x, y, width, height, state, order } = defineProps<PanelProps>()
 
 const emit = defineEmits<{
   (e: 'focus', id: string): void
@@ -97,6 +112,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
   background-color: white;
   flex-flow: column;
   border: 1px solid black;
+  z-index: v-bind(order);
 
   &.maximized {
     left: 0;

@@ -4,6 +4,7 @@
       v-for="[id, panel] in panels"
       :key="id"
       v-bind="panel"
+      :order="panelOrder.indexOf(id)"
       @focus="focusPanel"
       @grab="startDragPanel"
       @close="closePanel"
@@ -37,6 +38,7 @@ import {
 } from '~~/components/DesktopPanel.vue'
 
 const panels = $ref(new Map<string, Panel>())
+const panelOrder: string[] = $ref([])
 
 function createMarkdownPanel(path?: string) {
   path = path ?? window.prompt('Enter path to Markdown content') ?? undefined
@@ -46,6 +48,7 @@ function createMarkdownPanel(path?: string) {
     props: { path },
   })
   panels.set(panel.id, panel)
+  panelOrder.push(panel.id)
 }
 
 function createWebPanel(href?: string) {
@@ -53,17 +56,17 @@ function createWebPanel(href?: string) {
   if (!href) return
   const panel = createPanel({ href })
   panels.set(panel.id, panel)
+  panelOrder.push(panel.id)
 }
 
 createMarkdownPanel('nested/markdown-cheatsheet')
 createWebPanel('https://nuxtjs.org/')
 
 function focusPanel(id: string) {
-  const panel = panels.get(id)
-  if (!panel) return
-  // FIXME causes panel content to reload
-  panels.delete(id)
-  panels.set(id, panel)
+  const index = panelOrder.indexOf(id)
+  if (index === -1) return
+  panelOrder.splice(index, 1)
+  panelOrder.push(id)
 }
 
 let draggedPanel = $ref<Panel>()
@@ -98,6 +101,9 @@ function updateMouse(event: MouseEvent) {
 
 function closePanel(id: string) {
   panels.delete(id)
+  const index = panelOrder.indexOf(id)
+  if (index === -1) return
+  panelOrder.splice(index, 1)
 }
 
 function minimizePanel(id: string) {
