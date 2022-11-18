@@ -30,6 +30,7 @@
       :panels="panels"
       :focusedId="panelOrder[panelOrder.length - 1]"
       @focus="focusPanel"
+      @close="closePanel"
       @newPanel="registerPanel"
     />
   </main>

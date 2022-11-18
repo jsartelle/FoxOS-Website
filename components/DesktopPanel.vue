@@ -42,6 +42,7 @@ export function createPanel(opts: Partial<Panel>): Panel {
 
 <script setup lang="ts">
 export interface Panel {
+  // TODO title, height, width should pull defaults from the component somehow
   title: string
   id: string
   x: number
@@ -50,12 +51,14 @@ export interface Panel {
   height: number
   state: PanelState | null
   component?: string
+  // TODO this way of passing props erases type checking and is kinda dumb
   props?: any
+  // TODO this should be handled by a Browser component instead
   href?: string
 }
 
 export interface PanelProps {
-  // TODO extending Panel doesn't work
+  // TODO extending Panel interface doesn't work
   title: string
   id: string
   x: number
@@ -135,7 +138,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
 }
 
 .title {
-  // TODO center me
+  // TODO center panel title
   padding: 0 20px;
   flex-grow: 1;
   user-select: none;
@@ -145,6 +148,7 @@ const unwatch = watch($$(contentsRef), (contents) => {
   width: v-bind('width + "px"');
   height: v-bind('height + "px"');
   overflow: scroll;
+  // TODO panel resize doesn't work right in Safari
   resize: both;
   min-width: 100%;
 

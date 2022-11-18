@@ -6,8 +6,10 @@
         class="panel-button"
         :class="{ focused: id === focusedId }"
         :key="id"
-        @click="$emit('focus', id)"
+        @click.left="$emit('focus', id)"
+        @click.middle="$emit('close', id)"
       >
+        <button @click.stop="$emit('close', id)">✖️</button>
         {{ panel.title }}
       </button>
     </div>
@@ -32,6 +34,7 @@ const { panels, focusedId } = defineProps<{
 
 const emit = defineEmits<{
   (e: 'focus', id: string): void
+  (e: 'close', id: string): void
   (e: 'newPanel', panel: Panel): void
 }>()
 
