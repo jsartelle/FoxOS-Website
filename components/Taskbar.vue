@@ -17,10 +17,12 @@
     <button class="create-button" @click="createWebPanel">
       Create Web Panel
     </button>
+    <button class="create-button" @click="createCubePanel">CUBE</button>
   </div>
 </template>
 
 <script setup lang="ts">
+import CubeStudio from '~~/components/CubeStudio.vue'
 import { Panel, createPanel } from '~~/components/DesktopPanel.vue'
 
 const { panels, focusedId } = defineProps<{
@@ -54,6 +56,18 @@ function createWebPanel() {
   const href = window.prompt('Enter a URL', 'https://nuxtjs.org/') ?? undefined
   if (!href) return
   emit('newPanel', createPanel({ title: href, href }))
+}
+
+function createCubePanel() {
+  emit(
+    'newPanel',
+    createPanel({
+      title: 'Cube Construction Set',
+      // FIXME not sure why this isn't working when passed as a string
+      component: CubeStudio,
+      width: 900,
+    })
+  )
 }
 </script>
 
